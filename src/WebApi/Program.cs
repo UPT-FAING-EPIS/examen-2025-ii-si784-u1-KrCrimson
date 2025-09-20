@@ -1,7 +1,17 @@
-
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Domain;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuración de CORS para permitir peticiones desde el frontend
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -25,6 +35,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+
+app.UseCors();
 app.UseHttpsRedirection();
 
 var summaries = new[]
@@ -120,3 +132,14 @@ app.MapDelete("/reservations/{id}", async (Guid id, IReservationRepository reser
     return Results.Ok($"Reserva {id} cancelada correctamente.");
 })
 .WithName("CancelReservation");
+
+/// <summary>
+/// Endpoint para obtener las reservas (no canceladas) de un vuelo por su ID.
+/// </summary>
+app.MapGet("/reservations/flight/{flightId}", async (Guid flightId, IReservationRepository reservationRepo) =>
+{
+    // Obtener todas las reservas no canceladas para el vuelo
+    var reservas = await reservationRepo.GetByFlightIdAsync(flightId);
+    return Results.Ok(reservas);
+})
+.WithName("GetReservationsByFlight");

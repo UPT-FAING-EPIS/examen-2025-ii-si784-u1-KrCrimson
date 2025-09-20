@@ -15,5 +15,6 @@ namespace Infrastructure
         Task AddAsync(Reservation reservation);
         Task UpdateAsync(Reservation reservation);
         Task DeleteAsync(Guid id);
+        Task<List<Reservation>> GetByFlightIdAsync(Guid flightId);
     }
 }

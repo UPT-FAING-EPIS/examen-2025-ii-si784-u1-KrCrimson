@@ -24,6 +24,11 @@ namespace Infrastructure
             return await _context.Reservations.Where(r => r.UserId == userId && !r.IsCancelled).ToListAsync();
         }
 
+            public async Task<List<Reservation>> GetByFlightIdAsync(Guid flightId)
+            {
+                return await _context.Reservations.Where(r => r.FlightId == flightId && !r.IsCancelled).ToListAsync();
+            }
+
         public async Task<Reservation?> GetByIdAsync(Guid id)
         {
             return await _context.Reservations.FindAsync(id);

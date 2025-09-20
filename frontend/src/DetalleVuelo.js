@@ -1,17 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 
 export default function DetalleVuelo({ vuelo, onReservar }) {
   const [seat, setSeat] = useState('');
   const [userId, setUserId] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
+  const [ocupados, setOcupados] = useState([]);
+
+  useEffect(() => {
+    if (vuelo) {
+      fetch(`http://localhost:5197/reservations/flight/${vuelo.id}`)
+        .then(res => res.json())
+        .then(data => setOcupados(data.map(r => r.seatNumber)));
+    } else {
+      setOcupados([]);
+    }
+  }, [vuelo]);
 
   if (!vuelo) return null;
 
   const handleReserva = async (e) => {
     e.preventDefault();
-    if (!seat || !userId || isNaN(seat) || parseInt(seat, 10) <= 0) {
+    const numSeat = parseInt(seat, 10);
+    if (!seat || !userId || isNaN(numSeat) || numSeat <= 0) {
       setError('Debe ingresar un usuario y un número de asiento válido.');
+      return;
+    }
+    if (ocupados.includes(numSeat)) {
+      setError(`El asiento ${numSeat} ya está ocupado.`);
       return;
     }
     setError('');
@@ -22,7 +39,7 @@ export default function DetalleVuelo({ vuelo, onReservar }) {
       body: JSON.stringify({
         flightId: vuelo.id,
         userId,
-        seatNumber: parseInt(seat, 10)
+        seatNumber: numSeat
       })
     });
     if (res.ok) {
@@ -41,6 +58,9 @@ export default function DetalleVuelo({ vuelo, onReservar }) {
       <p><b>Salida:</b> {new Date(vuelo.departureTime).toLocaleString()}</p>
       <p><b>Llegada:</b> {new Date(vuelo.arrivalTime).toLocaleString()}</p>
       <p><b>Aerolínea:</b> {vuelo.airline}</p>
+      <div style={{ margin: '10px 0' }}>
+        <b>Asientos ocupados:</b> {ocupados.length > 0 ? ocupados.join(', ') : 'Ninguno'}
+      </div>
       <form onSubmit={handleReserva} style={{ marginTop: 10 }}>
         <input type="text" placeholder="ID Usuario" value={userId} onChange={e => setUserId(e.target.value)} required />
         <input type="number" placeholder="N° Asiento" value={seat} onChange={e => setSeat(e.target.value)} required min="1" />
