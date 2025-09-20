@@ -10,7 +10,7 @@ builder.Services.AddOpenApi();
 // Configuración de DbContext para PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+                        
 // Registro del repositorio de vuelos en el contenedor de dependencias
 builder.Services.AddScoped<IFlightRepository, FlightRepository>();
 
