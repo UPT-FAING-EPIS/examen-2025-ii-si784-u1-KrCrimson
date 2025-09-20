@@ -11,6 +11,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Registro del repositorio de vuelos en el contenedor de dependencias
+builder.Services.AddScoped<IFlightRepository, FlightRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,12 +40,17 @@ app.MapGet("/weatherforecast", () =>
         ))
         .ToArray();
     return forecast;
+});
+
+/// <summary>
+/// Endpoint para obtener la lista de vuelos desde la base de datos PostgreSQL.
+/// </summary>
+app.MapGet("/flights", async (IFlightRepository flightRepo) =>
+{
+    // Consulta todos los vuelos usando el repositorio
+    var flights = await flightRepo.GetAllAsync();
+    return Results.Ok(flights);
 })
-.WithName("GetWeatherForecast");
+.WithName("GetFlights");
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
