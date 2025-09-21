@@ -1,0 +1,14 @@
+name: Generate Class Diagram
+on:
+  push:
+    branches:
+      - main
+jobs:
+  plantuml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Generate UML Diagram
+        uses: plantuml/plantuml-action@v1.0.0
+        with:
+          args: "-tsvg src/**/*.puml"

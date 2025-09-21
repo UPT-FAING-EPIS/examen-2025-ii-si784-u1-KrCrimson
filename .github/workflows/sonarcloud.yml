@@ -1,0 +1,19 @@
+name: SonarCloud Scan
+on:
+  push:
+    branches:
+      - main
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2.1.1
+        with:
+          projectBaseDir: .
+        env:
+          SONAR_TOKEN: ${{ secrets.380d171ea73d80fdae5c7b54eafd92efd015c4be }}
+          SONAR_PROJECT_KEY: ${{ secrets.krcrimson_apibank }}
+          SONAR_ORGANIZATION: ${{ secrets.krcrimson }}

@@ -1,0 +1,19 @@
+name: Deploy Frontend to Vercel
+on:
+  push:
+    paths:
+      - 'frontend/**'
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.v2zi6P5xqohv6MgteFAlbSfL }}
+          vercel-org-id: ${{ secrets.REdlTxYrFUCvJiwiwWpZdCXI }}
+          vercel-project-id: ${{ secrets.prj_nfgjwRFUlfCyV9CbWLzXAI5xIg9Z }}
+          working-directory: frontend

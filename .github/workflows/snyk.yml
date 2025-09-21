@@ -1,0 +1,14 @@
+name: Snyk Scan
+on:
+  push:
+    branches:
+      - main
+jobs:
+  snyk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Snyk Scan
+        uses: snyk/actions@master
+        env:
+          SNYK_TOKEN: ${{ secrets.1d23ce10-a6aa-44f0-b6d2-19c2a5a99091 }}
